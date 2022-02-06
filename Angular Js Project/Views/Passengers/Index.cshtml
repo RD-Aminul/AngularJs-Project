@@ -1,0 +1,303 @@
+﻿@model IEnumerable<Passsenger>
+@{
+    ViewData["Title"] = "| Passenger";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<br />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<script src="~/angular/custom/module.js"></script>
+<script src="~/angular/custom/service.js"></script>
+<script src="~/angular/custom/controller.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+<h1>List of Passenger</h1>
+<div ng-app="psngrModule" ng-controller="psngrController">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Button trigger modal -->
+            <button ng-click="FillDropDownValue()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Add Passenger Info
+            </button>
+            <br />
+        </div>
+        <div class="col-md-4">
+            <form asp-controller="Passengers" asp-action="Index" style="position:static">
+                <div class="row">
+                    <div>
+                        <input class="form-control" type="text" name="searchText" placeholder="Search..." />
+                    </div>
+                    <input class="p-1 ml-2 btn btn-outline-info btn-light" type="submit" value="Search" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="text-align:center">
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Journey Date</th>
+                    <th>Train</th>
+                    <th>Route</th>
+                    <th>Class</th>
+                    <th>Fee</th>
+                    @*<th>Photo</th>*@
+                    <th>Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr ng-repeat="item in psngr" style="text-align:center">
+                    <td>{{item.PassengerID}}</td>
+                    <td>{{item.PassengerName}}</td>
+                    <td>{{item.PassengerEmail}}</td>
+                    <td>{{item.PassengerPhone}}</td>
+                    <td>{{item.JourneyDate | date : "dd-MMM-yyyy"}}</td>
+                    <td>{{item.TrainName}}</td>
+                    <td>{{item.RouteName}}</td>
+                    <td>{{item.ClassName}}</td>
+                    <td>{{item.Fee}}</td>
+
+                    @*<td class="text-center">
+                            <img ng-src="/Images/{{item.PhotoPath}}" + item.i" height="60" width="60" asp-append-version="true" />
+                        </td>*@
+                    <td>
+                        <a data-toggle="modal" data-target="#editModal" ng-click="SelectedPsngr(item)" class="btn btn-dark">Edit</a>
+                        <a ng-click="DeletePsngr(item.PassengerID)" onclick="return confirm('Are You Sure to Delete')" class="btn btn-danger">Delete</a>
+                        <a data-toggle="modal" data-target="#detailModal" ng-click="SelectedPsngr(item)" class="btn btn-info">Details</a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <partial name="_Pager" model="@pager" />
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Passenger</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Name</label>
+                            <input ng-model="newPsngr.PassengerName" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Email</label>
+                            <input ng-model="newPsngr.PassengerEmail" class="form-control" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Phone</label>
+                            <input ng-model="newPsngr.PassengerPhone" class="form-control" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Journey Date</label>
+                            <input ng-model="newPsngr.JourneyDate" type="date" class="form-control datetimepicker" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Train</label>
+                            <select name="TrainID" ng-model="newPsngr.TrainID" ng-change="FillDropDownValue()" class="form-control">
+                                <option value="">Choose Train</option>
+                                <option ng-repeat="item in trains" value="{{item.TrainID}}">
+                                    {{item.TrainName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Route</label>
+                            <select name="RouteID" ng-model="newPsngr.RouteID" ng-change="FillDropDownValue()" class="form-control">
+                                <option value="">Choose Route</option>
+                                <option ng-repeat="item in routes" value="{{item.RouteID}}">
+                                    {{item.RouteName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Class</label>
+                            <select name="ClassID" ng-model="newPsngr.ClassID" ng-change="FillDropDownValue()" class="form-control">
+                                <option value="">Choose Class</option>
+                                <option ng-repeat="item in classes" value="{{item.ClassID}}">
+                                    {{item.ClassName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fee</label>
+                            <input ng-model="newPsngr.Fee" class="form-control" type="text" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-save="modal" ng-click="Insert()" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Passenger</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Name</label>
+                            <input ng-model="clickedpsngr.PassengerName" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Email</label>
+                            <input ng-model="clickedpsngr.PassengerEmail" class="form-control" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Phone</label>
+                            <input ng-model="clickedpsngr.PassengerPhone" class="form-control" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Journey Date</label>
+                            <input ng-model="clickedpsngr.JourneyDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Train</label>
+                            <select ng-model="clickedpsngr.TrainID" class="form-control" ng-options="value.TrainID as value.TrainName for (key, value) in trains">
+                                <option value="">Choose Train</option>
+                                <option ng-repeat="item in trains" value="{{item.TrainID}}" ng-selected="clickedpsngr.TrainID == item.TrainID">
+                                    {{item.TrainName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Route</label>
+                            <select ng-model="clickedpsngr.RouteID" class="form-control" ng-options="value.RouteID as value.RouteName for (key, value) in routes">
+                                <option value="">Choose Route</option>
+                                <option ng-repeat="item in routes" value="{{item.RouteID}}" ng-selected="clickedpsngr.RouteID == item.RouteID">
+                                    {{item.RouteName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Class</label>
+                            <select ng-model="clickedpsngr.ClassID" class="form-control" ng-options="value.ClassID as value.ClassName for (key, value) in classes">
+                                <option value="">Choose Class</option>
+                                <option ng-repeat="item in classes" value="{{item.ClassID}}" ng-selected="clickedpsngr.ClassID == item.ClassID">
+                                    {{item.ClassName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fee</label>
+                            <input ng-model="clickedpsngr.Fee" class="form-control" type="text" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-save="modal" ng-click="UpdatePsngr()" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Details Passenger</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Name</label>
+                            <input ng-model="clickedpsngr.PassengerName" class="form-control" disabled/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Email</label>
+                            <input ng-model="clickedpsngr.PassengerEmail" class="form-control" type="text" disabled/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Passenger Phone</label>
+                            <input ng-model="clickedpsngr.PassengerPhone" class="form-control" type="text" disabled/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Journey Date</label>
+                            <input ng-model="clickedpsngr.JourneyDate" type="date" class="form-control" disabled/>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Train</label>
+                            <select ng-model="clickedpsngr.Trainid" class="form-control" ng-options="value.Trainid as value.TrainName for (key, value) in trains" disabled>
+                                <option value="">Choose Class</option>
+                                <option ng-repeat="item in trains" value="{{item.Trainid}}" ng-selected="clickedpsngr.Trainid = item.Trainid">
+                                    {{item.TrainName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Route</label>
+                            <select ng-model="clickedpsngr.Routeid" class="form-control" ng-options="value.Routeid as value.RouteName for (key, value) in routes" disabled>
+                                <option value="">Choose Route</option>
+                                <option ng-repeat="item in routes" value="{{item.Routeid}}" ng-selected="clickedpsngr.Routeid = item.Routeid">
+                                    {{item.RouteName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Class</label>
+                            <select ng-model="clickedpsngr.Classid" class="form-control" ng-options="value.Classid as value.RouteName for (key, value) in classes" disabled>
+                                <option value="">Choose Class</option>
+                                <option ng-repeat="item in classes" value="{{item.Classid}}" ng-selected="clickedpsngr.Classid = item.Classid">
+                                    {{item.ClassName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fee</label>
+                            <input ng-model="clickedpsngr.Fee" class="form-control" type="text" disabled/>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-save="modal" ng-click="UpdatePsngr()" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Route>
+@{
+    ViewData["Title"] = "| Route";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<br />
+<link href="~/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+<h1>List of Route</h1>
+<div>
+    <p>@Html.ActionLink("Create New Route", "Create", "Routes")</p>
+    <table class="table table-bordered">
+        <thead>
+            <tr style="text-align:center">
+                <th>Route ID</th>
+                <th>Route Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="text-align:center">
+                    <td>@item.RouteID</td>
+                    <td>@item.RouteName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ApplicationRole>
+@{
+    ViewBag.Title = "List of Roles";
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<h3> All Roles </h3>
+
+<a class="btn btn-primary" asp-action="CreateRole" asp-controller="Administrator">Add New Role</a>
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <tr>
+            <th>Role Name</th>
+            <th>Operations</th>
+        </tr>
+
+
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    <a asp-controller="Administrator" asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-outline-info">Edit Role</a>
+                    <a asp-controller="Administrator" asp-action="Delete" asp-route-id="@role.Id" class="btn btn-outline-danger">Delete Role</a>
+                    <a asp-controller="Administrator" asp-action="EditUserInRole" asp-route-id="@role.Id" class="btn btn-outline-success">Role Assign</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <p>No Role Found</p>
+}

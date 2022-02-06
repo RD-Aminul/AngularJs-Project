@@ -1,0 +1,72 @@
+﻿@model Passsenger
+
+@{
+    ViewData["Title"] = "| Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Passengers</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PassengerName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PassengerName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PassengerEmail)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PassengerEmail)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PassengerPhone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PassengerPhone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.JourneyDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.JourneyDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TrainID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TrainID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RouteID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RouteID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ClassID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ClassID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fee)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fee)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhotoPath)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="~/Images/@Model.PhotoPath" width="90" height="90" asp-append-version="true" />
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
